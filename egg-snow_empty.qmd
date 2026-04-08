@@ -16,6 +16,7 @@ library(RColorBrewer)
 
 ```{r}
 path_raw <- here("data","raw")
+path_processed <- here("data","processed")
 
 sites_csv <- "site.csv"
 
@@ -108,7 +109,7 @@ nests_month <- nests_data %>%
 Read the snow cover data in
 
 ```{r}
-snowcover_data <- read_csv(file.path(path_raw, snowcover_csv))
+snowcover_data <- read_csv(file.path(path_processed, snowcover_csv))
 
 glimpse(snowcover_data)
 ```
