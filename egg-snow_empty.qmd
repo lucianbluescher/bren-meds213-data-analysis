@@ -93,7 +93,7 @@ nest_species_avg %>%
 
 ## Question 2: Does the snow amount & timing impact the number of eggs? Is it species dependant?
 
-Since the observations are made a different time, we will aggragate the data by month to have an common denominator in time.
+Since the observations are made a different time, we will aggregate the data by month to have an common denominator in time.
 
 ### Summarize the nests table
 
@@ -126,6 +126,7 @@ The Date is stored as a character :/, we thus first we need to transform the dat
 
 ```{r}
 snowcover_data_fixed <- snowcover_data %>%
+  mutate(Date2 = as_date(Date))
   
 ```
 
@@ -133,6 +134,7 @@ We have 72 errors. Let's have a look at the date which failed:
 
 ```{r}
 snowcover_data_fixed %>% 
+  filter(is.na(Date2))
 
 ```
 
@@ -141,7 +143,10 @@ It is because 2 days were entered as one value `8&9 june 06`, it is not in the e
 
 ```{r}
 snowcover_data_fixed <- snowcover_data_fixed %>%
-  
+  mutate(Date = if_else(Date == "8&9 june 06", "08-June-06", Date))
+
+snowcover_data_fixed <- snowcover_data_fixed |> 
+  mutate(Date2 = as_date(Date))
 ```
 
 Mmm the Dates are not what we were expecting... It generally means there are different date types. Let's start by fixing the problematic dates before transforming it to the date format.
@@ -162,7 +167,10 @@ Now let's compute the monthly statistics
 
 ```{r}
 # adding the snow days with a threshold at 10%
-snowcover_month <- snowcover_data_fixed %>%
+snowcover_month <- snowcover_data_fixed %>% 
+  mutate(snow_day = if_else(Snow_cover > 10, 1, 0)) %>%
+  group_by(Site, Year, Month = month(Date2)) %>%
+  summarise(cum_snow_days = sum(snow_day), avg_snow_cover = mean(Snow_cover, na.rm = TRUE))
   
 ```
 
@@ -172,7 +180,8 @@ snowcover_month <- snowcover_data_fixed %>%
 Since now we have the months in common, we can use them to join our two datasets:
 
 ```{r}
-nests_snow_month <- 
+nests_snow_month <- nest_data |> 
+  inner_join()
 ```
 
 Well in the end we did not have much information by months (mainly 2 months per year focused on June and July), so let's aggregate by year instead:
