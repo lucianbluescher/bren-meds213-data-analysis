@@ -26,8 +26,6 @@ nests_csv <- "ASDN_Bird_nests.csv"
 eggs_csv <- "ASDN_Bird_eggs.csv"
 
 species_csv <- "species.csv"
-
-lemmings_csv <- "ASDN_Daily_pred_lemm.csv"
 ```
 
 
